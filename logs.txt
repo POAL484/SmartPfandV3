@@ -1,0 +1,5 @@
+
+13:18:47 config loaded, uid: 3bf02732-cbdf-4ec8-a7f7-282f5ee1a5f1
+13:18:47 App inited
+13:18:47 App runned
+13:18:47 trying to connect...

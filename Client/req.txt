@@ -1,0 +1,8 @@
+pygame
+websockets
+keyboard
+pyautogui
+mouse
+cryptography
+RPi.GPIO
+flask

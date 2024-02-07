@@ -1,0 +1,7 @@
+flask
+requests
+uuid
+pymongo
+cryptography
+websockets
+asyncio
