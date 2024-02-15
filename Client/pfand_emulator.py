@@ -10,7 +10,7 @@ class ConfigVar:
         self.name = name
 
 class HX711:
-    def __init__(self, clock_pin = 3, data_pin = 4):
+    def __init__(self, cfg: dict):
         self.weight = ConfigVar("weight", 0)
 
     def getWeight(self):
@@ -18,7 +18,7 @@ class HX711:
         except ValueError: return 0
     
 class RFID:
-    def __init__(self, pins = 123):
+    def __init__(self, cfg: dict):
         self.uuid = ConfigVar("uuid", "AAAAAAAA")
 
     def presentedCard(self):

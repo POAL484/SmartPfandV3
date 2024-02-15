@@ -99,6 +99,100 @@ class Bank:
             [xcenter+(self.calcPoint(40, 55, rotate)[0]*ksize), ycenter+(self.calcPoint(40, 55, rotate)[1]*ksize)]
         ])
         
+class AnimationState(Enum):
+    NONE = 41
+    READY = 42
+    RISE = 43
+    FALL = 44
+
+class BankAnimation:
+    
+    SIZE_TIME = 1.4
+    COLOR_TIME = 1.4
+
+    def __init__(self, cfg: dict, yPos: int):
+        self.deltaSizeDraw = time.time()
+        self.deltaColorDraw = time.time()
+        self.deltaSizeCount = time.time()
+        self.deltaColorCount = time.time()
+
+        self.sizeAnimation = AnimationState.NONE
+        self.colorAnimation = AnimationState.NONE
+
+        self.min_weight = cfg['min_bank_weight']
+        self.max_weight = cfg['max_bank_weight']
+
+        self.yPos = yPos
+
+    def __call__(self, weight: float, root, es: EventState):
+        size = .05
+        xPos = -100
+        color = 0
+        if weight > self.min_weight:
+            if self.sizeAnimation == AnimationState.NONE:
+                self.sizeAnimation = AnimationState.RISE
+                self.deltaSizeDraw = time.time()
+                self.deltaSizeCount = time.time()
+            elif self.sizeAnimation == AnimationState.FALL:
+                self.sizeAnimation = AnimationState.RISE
+                self.deltaSizeCount = time.time() - (self.SIZE_TIME - (time.time() - self.deltaSizeDraw))
+                self.deltaSizeDraw = time.time() - (self.SIZE_TIME - (time.time() - self.deltaSizeDraw))
+            if self.sizeAnimation != AnimationState.READY:
+                size = 1.6 + math.sin((time.time() - self.deltaSizeDraw)*(math.pi/2/self.SIZE_TIME))
+                xPos = -75 + math.sin((time.time() - self.deltaSizeDraw)*(math.pi/2/self.SIZE_TIME))*250
+            else:
+                size = 2.6
+                xPos = 175
+            if self.sizeAnimation == AnimationState.RISE and time.time() - self.deltaSizeCount >= self.SIZE_TIME:
+                self.sizeAnimation = AnimationState.READY
+        if weight > self.max_weight:
+            if self.colorAnimation == AnimationState.NONE:
+                self.colorAnimation = AnimationState.RISE
+                self.deltaColorDraw = time.time()
+                self.deltaColorCount = time.time()
+            elif self.colorAnimation == AnimationState.FALL:
+                self.colorAnimation = AnimationState.RISE
+                self.deltaColorCount = time.time() - (self.COLOR_TIME - (time.time() - self.deltaColorDraw))
+                self.deltaColorDraw = time.time() - (self.COLOR_TIME - (time.time() - self.deltaColorDraw))
+            if self.colorAnimation == AnimationState.RISE and time.time() - self.deltaColorCount >= self.COLOR_TIME:
+                self.colorAnimation = AnimationState.READY
+        else:
+            if self.colorAnimation == AnimationState.READY:
+                self.colorAnimation = AnimationState.FALL
+                self.deltaColorCount = time.time()
+                self.deltaColorDraw = time.time()
+            elif self.colorAnimation == AnimationState.RISE:
+                self.colorAnimation = AnimationState.FALL
+                self.deltaColorCount = time.time() - (self.COLOR_TIME - (time.time() - self.deltaColorDraw))
+                self.deltaColorDraw = time.time() - (self.COLOR_TIME - (time.time() - self.deltaColorDraw))
+            if self.colorAnimation == AnimationState.FALL and time.time() - self.deltaColorCount >= self.COLOR_TIME:
+                self.colorAnimation = AnimationState.NONE
+        if weight < self.min_weight:
+            if self.sizeAnimation == AnimationState.READY:
+                self.sizeAnimation = AnimationState.FALL
+                self.deltaSizeDraw = time.time()
+                self.deltaSizeCount = time.time()
+            elif self.sizeAnimation == AnimationState.RISE:
+                self.sizeAnimation = AnimationState.FALL
+                self.deltaSizeCount = time.time() - (self.SIZE_TIME - (time.time() - self.deltaSizeDraw))
+                self.deltaSizeDraw = time.time() - (self.SIZE_TIME - (time.time() - self.deltaSizeDraw))
+            if self.sizeAnimation == AnimationState.FALL and time.time() - self.deltaSizeCount >= self.SIZE_TIME:
+                self.sizeAnimation = AnimationState.NONE
+            if self.sizeAnimation != AnimationState.NONE:
+                size = 1.6 + math.sin(math.pi/2 - (time.time() - self.deltaSizeDraw)*(math.pi/2/self.SIZE_TIME))
+                xPos = -75 + math.sin(math.pi/2 - (time.time() - self.deltaSizeDraw)*(math.pi/2/self.SIZE_TIME))*250
+        if self.colorAnimation == AnimationState.NONE: color = 0
+        elif self.colorAnimation == AnimationState.READY: color = -75
+        elif self.colorAnimation == AnimationState.RISE: color = math.sin((time.time() - self.deltaColorDraw)*(math.pi/2/self.COLOR_TIME))*-75
+        elif self.colorAnimation == AnimationState.FALL: color = math.sin(math.pi/2 - (time.time() - self.deltaColorDraw)*(math.pi/2/self.COLOR_TIME))*-75
+        Bank(root, es, xPos, self.yPos, size, color, 0)
+            
+class BankWorkState(Enum):
+    NOTHING = 51
+    NEED_START_NEURAL = 52
+    NEURAL_CHECK = 53
+    NEURAL_FAIL = 54
+    CARD = 55
 
 class Logger:
     def __init__(self):

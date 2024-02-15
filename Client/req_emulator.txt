@@ -4,9 +4,7 @@ keyboard
 pyautogui
 mouse
 cryptography
-RPi.GPIO
 flask
 opencv-python
 keras
 tensorflow
-pi-rc522
