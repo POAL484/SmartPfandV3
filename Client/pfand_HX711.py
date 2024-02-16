@@ -13,7 +13,7 @@ class HX711:
         GPIO.setup(self.DATA_PIN, GPIO.IN)
 
         self.offset = cfg['hx711']['offset']
-        self.oneGramm = cfg['hx']['1gramm']
+        self.oneGramm = cfg['hx711']['1gramm']
 
     def available(self):
         return not GPIO.input(self.DATA_PIN)
@@ -55,3 +55,10 @@ class HX711:
         for i in range(times): weights.append(self.readInGramms())
         weights.sort()
         return weights[(times-1)//2]
+
+if __name__ == "__main__":
+    from pfand_types import Logger
+    hx = HX711({'hx711': {'clock': 6, 'data': 5, 'offset': 0, '1gramm': 1}}, Logger())
+    while 1:
+        time.sleep(1.5)
+        print(hx.readRawValue)
