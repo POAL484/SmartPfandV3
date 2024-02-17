@@ -16,7 +16,7 @@ class EventState:
     def __init__(self):
         self.mouseX = pag.position()[0]
         self.mouseY = pag.position()[1]
-        self.pressed = mouse.is_pressed()
+        self.pressed = pg.mouse.get_pressed()
 
 class Anchor(Enum):
     LEFT = 10

@@ -148,8 +148,8 @@ class App:
         self.bankWorkState = BankWorkState.NOTHING
         self.neural = Neural(self)
         self.storageMode = StorageMode.NOT_SET
-        self.hx711 = dvs.HX711()
-        self.rfid = dvs.RFID()
+        self.hx711 = dvs.HX711(self.config)
+        self.rfid = dvs.RFID(self.config)
         if dvs.is_emulator: dvs.createEmulator()
         self.wsclient = WsClient(self.config, self.logger)
         self.screen = InitScreen(self)
