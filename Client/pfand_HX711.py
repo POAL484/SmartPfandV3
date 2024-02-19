@@ -28,6 +28,7 @@ class HX711:
         for i in range(8):
             val <<= 1
             val |= self.readBit()
+        return val
 
     def readRawValue(self):
         while not self.available(): pass
@@ -49,7 +50,7 @@ class HX711:
         return val
 
     def getWeight(self):
-        times = 5
+        times = 15
 
         weights = []
         for i in range(times): weights.append(self.readInGramms())
@@ -58,7 +59,11 @@ class HX711:
 
 if __name__ == "__main__":
     from pfand_types import Logger
+<<<<<<< HEAD
     hx = HX711({'hx711': {'clock': 6, 'data': 5, 'offset': -13500, '1gramm': 400}}, Logger())
+=======
+    hx = HX711({'hx711': {'clock': 6, 'data': 5, 'offset': -13750, '1gramm': 400}}, Logger())
+>>>>>>> 3a5f682bfb3d12fae1c1890d6b211ba6144a7737
     while 1:
-        time.sleep(1.5)
-        print(hx.readRawValue)
+        time.sleep(1)
+        print(hx.getWeight(), hx.readRawValue())

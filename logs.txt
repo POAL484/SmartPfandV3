@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 18:11:06 config loaded, uid: 3bf02732-cbdf-4ec8-a7f7-282f5ee1a5f1
 18:11:06 App inited
 18:11:06 App runned
@@ -20,3 +21,6 @@
 18:11:39 App changed screen to OpenCardAnimationScreen
 18:11:40 App changed screen to CardScreen
 18:11:48 App changed screen to CardedScreen
+=======
+16:57:24 config loaded, uid: 3bf02732-cbdf-4ec8-a7f7-282f5ee1a5f1
+>>>>>>> 3a5f682bfb3d12fae1c1890d6b211ba6144a7737
