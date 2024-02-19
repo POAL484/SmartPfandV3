@@ -134,7 +134,77 @@ class CloseIdleAnimationScreen(Screen):
         Text(self.root, es, self.app.width//2, 125 - ((time.time() - self.animDelt)/self.animDuration)*225, "Помести банку в банкоприемник", 64, (35, 35, 35), 'Arial', Anchor.CENTER, True)
         
         Text(self.root, es, self.app.width//2, self.app.height//2-100 - ((time.time() - self.animDelt)/self.animDuration)*(self.app.height//2), "Банка ура оооооо да банка ахереть это че банка", 44, (0, 0, 0), 'Arial', Anchor.CENTER)
+
+        if (time.time() - self.animDelt) >= self.animDuration: self.toScreen(OpenCardAnimationScreen)
         
+class OpenCardAnimationScreen(Screen):
+    def __init__(self, app):
+        super().__init__(app)
+        self.animDelt = time.time()
+        self.animDuration = 1.4
+
+    def __call__(self):
+        self.root.fill((255, 255, 255))
+        es = EventState() # чем гуще лес шкибиди доп ес ес
+
+        #SinGraf(self.root, es, 20, 350 - (((time.time() - self.animDelt)/self.animDuration))*450, colors.WATER_100, 0.022, 15)
+        #SinGraf(self.root, es, 20, 275 - (((time.time() - self.animDelt)/self.animDuration))*375, colors.WATER_200, 0.0175, 30)
+        #SinGraf(self.root, es, 20, 200 - (((time.time() - self.animDelt)/self.animDuration))*300, colors.WATER_300, 0.013, 50)
+
+        Button(self.root, es, self.app.width-150, 150 - ((time.time() - self.animDelt)/self.animDuration)*250, 250, 250, lambda: None, (255, 255, 255), Anchor.RIGHT)
+        pg.draw.circle(self.root, (60, 60, 60), (self.app.width-125, 125 - ((time.time() - self.animDelt)/self.animDuration)*225), 225/3, 15)
+        pg.draw.rect(self.root, (60, 60, 60), pg.Rect(self.app.width-125-7.5, 125-10 - ((time.time() - self.animDelt)/self.animDuration)*235, 15, 55))
+        pg.draw.rect(self.root, (60, 60, 60), pg.Rect(self.app.width-125-7.5, 125-45 - ((time.time() - self.animDelt)/self.animDuration)*270, 15, 15))
+
+        Text(self.root, es, self.app.width//2, 125 - ((time.time() - self.animDelt)/self.animDuration)*225, "Помести банку в банкоприемник", 64, (35, 35, 35), 'Arial', Anchor.CENTER, True)
+        
+        Text(self.root, es, self.app.width//2, self.app.height//2-100 - ((time.time() - self.animDelt)/self.animDuration)*(self.app.height//2), "Банка ура оооооо да банка ахереть это че банка", 44, (0, 0, 0), 'Arial', Anchor.CENTER)
+
+        if (time.time() - self.animDelt) >= self.animDuration: self.toScreen(CardScreen)
+
+class CardScreen(Screen):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.app.servo.open()
+
+    def __call__(self):
+        self.root.fill((255, 255, 255))
+        es = EventState()
+
+        stDrawPointX = (self.app.width // 6)
+        stDrawPointY = (self.app.height // 3) * 2
+        pg.draw.circle(self.root, (50, 50, 200), (stDrawPointX, stDrawPointY), 40)
+        pg.draw.arc(self.root, (50, 50, 200), pg.Rect(stDrawPointX-160, stDrawPointY-160, 160*2, 160*2), 0, math.pi/2, 50)
+        pg.draw.arc(self.root, (50, 50, 200), pg.Rect(stDrawPointX-260, stDrawPointY-260, 260*2, 260*2), 0, math.pi/2, 50)
+        pg.draw.arc(self.root, (50, 50, 200), pg.Rect(stDrawPointX-360, stDrawPointY-360, 360*2, 360*2), 0, math.pi/2, 50)
+
+        Text(self.root, es, (self.app.width // 2), (self.app.height//3), "Приложи любую электронную", 48, (0, 0, 0), 'Arial', Anchor.LEFT, True)
+        Text(self.root, es, (self.app.width // 2), (self.app.height//3) + 100, "карту к считывателю", 48, (0, 0, 0), 'Arial', Anchor.LEFT, True)
+
+        if self.app.rfid.presentedCard()[0]: self.toScreen(CardedScreen)
+
+class CardedScreen(Screen):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.app.air()
+
+    def __call__(self):
+        self.root.fill((255, 255, 255))
+        es = EventState()
+
+        stDrawPointX = (self.app.width // 6)
+        stDrawPointY = (self.app.height // 3) * 2
+        pg.draw.circle(self.root, (50, 50, 200), (stDrawPointX, stDrawPointY), 40)
+        pg.draw.arc(self.root, (50, 50, 200), pg.Rect(stDrawPointX-160, stDrawPointY-160, 160*2, 160*2), 0, math.pi/2, 50)
+        pg.draw.arc(self.root, (50, 50, 200), pg.Rect(stDrawPointX-260, stDrawPointY-260, 260*2, 260*2), 0, math.pi/2, 50)
+        pg.draw.arc(self.root, (50, 50, 200), pg.Rect(stDrawPointX-360, stDrawPointY-360, 360*2, 360*2), 0, math.pi/2, 50)
+
+        pg.draw.polygon(self.root, (180, 180, 180), [[stDrawPointX-50, stDrawPointY-340],
+                                                     [stDrawPointX+280, stDrawPointY-290],
+                                                     [stDrawPointX+280, stDrawPointY+40],
+                                                     [stDrawPointX-50, stDrawPointY]])
+        
+        Text(self.root, es, (self.app.width // 2), (self.app.height // 3), self.app.rfid.presentedCard()[1], 48, (0, 0, 0), 'Arial', Anchor.LEFT, True)
 
 class App:
     def __init__(self):
@@ -148,8 +218,10 @@ class App:
         self.bankWorkState = BankWorkState.NOTHING
         self.neural = Neural(self)
         self.storageMode = StorageMode.NOT_SET
-        self.hx711 = dvs.HX711()
-        self.rfid = dvs.RFID()
+        self.hx711 = dvs.HX711(self.config, self.logger)
+        self.rfid = dvs.RFID(self.config, self.logger)
+        self.servo = dvs.Servo(self.config, self.logger)
+        self.air = dvs.AIR(self.config, self.logger)
         if dvs.is_emulator: dvs.createEmulator()
         self.wsclient = WsClient(self.config, self.logger)
         self.screen = InitScreen(self)
@@ -158,6 +230,7 @@ class App:
     def __call__(self):
         self.screen()
         self.neural()
+        self.servo()
         pg.display.flip()
 
     def run_app(self):

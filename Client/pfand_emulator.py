@@ -10,7 +10,7 @@ class ConfigVar:
         self.name = name
 
 class HX711:
-    def __init__(self, cfg: dict):
+    def __init__(self, cfg: dict, logger):
         self.weight = ConfigVar("weight", 0)
 
     def getWeight(self):
@@ -18,12 +18,26 @@ class HX711:
         except ValueError: return 0
     
 class RFID:
-    def __init__(self, cfg: dict):
+    def __init__(self, cfg: dict, logger):
         self.uuid = ConfigVar("uuid", "AAAAAAAA")
+        self.isReaded = ConfigVar("read", False)
 
     def presentedCard(self):
-        return self.uuid.uuid
+        val = [self.isReaded.read, self.uuid.uuid]
+        self.isReaded.read = False
+        return val
     
+class AIR:
+    def __init__(self, cfg: dict, logger): pass
+    def __call__(self): pass
+    def close(self): pass
+
+class Servo:
+    def __init__(self, cfg: dict, logger): pass
+    def __call__(self): pass
+    def open(self): pass
+    def close(self): pass
+
 def createEmulator():
     app = Flask(__name__)
 

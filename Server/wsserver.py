@@ -98,7 +98,7 @@ class Server:
 
 
     async def _start_server(self):
-        async with serve(self.newMachineConnected, "localhost", self.port) as ws_server:
+        async with serve(self.newMachineConnected, "0.0.0.0", self.port) as ws_server:
             await asyncio.Future()
 
     def run(self):

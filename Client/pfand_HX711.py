@@ -58,7 +58,7 @@ class HX711:
 
 if __name__ == "__main__":
     from pfand_types import Logger
-    hx = HX711({'hx711': {'clock': 6, 'data': 5, 'offset': 0, '1gramm': 1}}, Logger())
+    hx = HX711({'hx711': {'clock': 6, 'data': 5, 'offset': -13500, '1gramm': 400}}, Logger())
     while 1:
         time.sleep(1.5)
         print(hx.readRawValue)

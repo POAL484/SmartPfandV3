@@ -61,10 +61,10 @@ class Neural:
             predIndex = np.argmax(preds)
             if self.app.bankWorkState == BankWorkState.NEURAL_CHECK:
                 match predIndex:
-                    case 0:
+                    case 1:
                         self.app.bankWorkState = BankWorkState.CARD
                         self.logger("neural success with result: CARD")
-                    case 1:
+                    case 2:
                         self.app.bankWorkState = BankWorkState.NEURAL_FAIL
                         self.logger("neural success with result: NEURAL_FAIL")
         else:

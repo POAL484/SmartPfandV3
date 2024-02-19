@@ -1,1 +1,1 @@
-{"machine_id": "3bf02732-cbdf-4ec8-a7f7-282f5ee1a5f1", "service": "V$^V#V7NF%q#mRxSx^1'W545v%6kyteK", "token": "DWQ6tTOZV=$\"JvBP9Cv''b#|Cw*SB{Yf", "min_bank_weight": 0.01, "max_bank_weight": 0.022, "cam_id": 0}
+{"machine_id": "3bf02732-cbdf-4ec8-a7f7-282f5ee1a5f1", "service": "V$^V#V7NF%q#mRxSx^1'W545v%6kyteK", "token": "'xkaVC;i}L&VO4?f?0%Qi$Of:P'r1e,c", "min_bank_weight": 5, "max_bank_weight": 25, "cam_id": 0, "hx711": {"clock": 6, "data": 5, "offset": -13500, "1gramm": 400}, "air": {"pin": 23, "time": 3}, "servo": {"pin": 22, "min_degree": 0, "max_degree": 45}}

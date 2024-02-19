@@ -62,14 +62,15 @@ class Button:
 class SinGraf:
     def __init__(self, root: pg.Surface, eventstate: EventState,
                  ycenter: int, height: int, color: tuple, kx: float, speed: float):
-        for i in range(root.get_width()):
+        '''for i in range(root.get_width()):
             y = int((ycenter * math.sin((i-(time.time()*speed))*kx))+root.get_height()-height)
             surf = pg.Surface((1, height+y))
             surf.fill(color)
             root.blit(
                 surf,
                 pg.Rect((i, y, 1, height+y))
-            )
+            )'''
+        pass
 
 class Bank:
     @classmethod
