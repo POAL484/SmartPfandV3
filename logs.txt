@@ -1,26 +1,20 @@
 
-<<<<<<< HEAD
-18:11:06 config loaded, uid: 3bf02732-cbdf-4ec8-a7f7-282f5ee1a5f1
-18:11:06 App inited
-18:11:06 App runned
-18:11:06 trying to connect...
-18:11:06 started initing camera
-18:11:08 connected to ws server
-18:11:08 auth success
-18:11:08 config updated
-18:11:13 camera inited
-18:11:13 loading model
-18:11:22 model loaded
-18:11:22 neural inited
-18:11:25 App changed screen to IdleScreen
-18:11:35 neural check started
-18:11:35 cam read success
-18:11:35 predicts started
-18:11:37 neural success with result: CARD
-18:11:37 App changed screen to CloseIdleAnimationScreen
-18:11:39 App changed screen to OpenCardAnimationScreen
-18:11:40 App changed screen to CardScreen
-18:11:48 App changed screen to CardedScreen
-=======
-16:57:24 config loaded, uid: 3bf02732-cbdf-4ec8-a7f7-282f5ee1a5f1
->>>>>>> 3a5f682bfb3d12fae1c1890d6b211ba6144a7737
+21:45:21 config loaded, uid: 3bf02732-cbdf-4ec8-a7f7-282f5ee1a5f1
+21:45:22 RFID main thread started
+21:45:22 servo inited
+21:45:22 air inited
+21:45:22 App inited
+21:45:22 trying to connect...
+21:45:22 App runned
+21:45:24 started initing camera
+21:45:24 connected to ws server
+21:45:24 camera inited
+21:45:24 loading model
+21:45:26 auth success
+21:45:26 config updated
+21:46:24 model loaded
+21:46:24 neural inited
+21:46:26 App changed screen to IdleScreen
+21:46:41 neural check started
+21:46:41 cam read success
+21:46:41 predicts started

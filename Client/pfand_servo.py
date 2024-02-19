@@ -16,7 +16,7 @@ class Servo:
 
         self.openingTime = 2.5
 
-        GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.pin, GPIO.OUT)
         self.PWM = GPIO.PWM(self.pin, 50)
         self.PWM.start(0)

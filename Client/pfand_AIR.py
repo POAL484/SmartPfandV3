@@ -9,7 +9,7 @@ class AIR:
         self.pin = cfg['air']['pin']
         self.air_time = cfg['air']['time']
 
-        GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.pin, GPIO.OUT)
 
         self.logger("air inited")

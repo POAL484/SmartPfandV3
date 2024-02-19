@@ -18,6 +18,7 @@ class RFID:
                     if self._flagIsPresented: self._flagIsPresented = 5
                     (error, uuid) = self.device.anticoll()
                     if not self._flagIsPresented:
+                        self._flagIsPresented = 5
                         self.uuid = [True, uuid]
                         self.logger(f"new card presented: {uuid}")
                 else:
@@ -28,7 +29,6 @@ class RFID:
     def presentedCard(self):
         val = self.uuid.copy()
         self.uuid[0] = False
-        print(self.uuid)
         return val
 
 if __name__ == "__main__":
