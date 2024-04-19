@@ -60,7 +60,7 @@ class Neural:
                 print(frameArray.shape)
                 #preds = self.model.predict(frameArray)
                 self.ws_send_send = frameArray
-                while not self.ws_send_recv: pass
+                while self.ws_send_recv is None: pass
                 print(f"get result {self.ws_send_recv}")
                 preds = self.ws_send_recv
                 self.ws_send_recv = None

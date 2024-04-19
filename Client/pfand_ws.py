@@ -24,11 +24,11 @@ class WsClient:
         thrd.Thread(target=self.run_wbs).start()
 
     def update_config(self):
-        json.dump(self.cfg, open("Client/pfand_configs.json", 'w'))
+        json.dump(self.cfg, open("pfand_configs.json", 'w'))
 
     async def wbs_runner(self):
         self.logger("trying to connect...")
-        async for ws in wbs.connect('ws://localhost:9090'):
+        async for ws in wbs.connect('ws://192.168.53.121:9090'):
             self.logger("connected to ws server")
             self.state = WsState.AUTHING
             msg = json.loads(await ws.recv())
@@ -62,10 +62,10 @@ class WsClient:
             self.update_config()
             self.logger("config updated")
             self.state = WsState.READY
-            #loop = asyncio.new_event_loop()
-            #thrd.Thread(target=loop.run_forever).start()
+            loop = asyncio.new_event_loop()
+            thrd.Thread(target=loop.run_forever).start()
             #asyncio.run_coroutine_threadsafe(self.sender(ws), loop)
-            thrd.Thread(target=self.sender_start, args=(ws, asyncio.get_running_loop())).start()
+            thrd.Thread(target=self.sender_start, args=(ws, loop)).start()
             async for msg in ws:
                 self.logger(f"message recieved: {msg}")
                 self.state = WsState.MESSAGE

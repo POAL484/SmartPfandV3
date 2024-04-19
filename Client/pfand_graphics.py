@@ -9,7 +9,7 @@ from pfand_ws import WsClient, WsState
 from pfand_neural import *
 
 import pfand_devices as dvs
-dvs.import_as(emulator=True)
+dvs.import_as(emulator=False)
 
 pg.init()
 
@@ -223,12 +223,12 @@ class CardedScreen(Screen):
                                                      [stDrawPointX+280, stDrawPointY+40],
                                                      [stDrawPointX-50, stDrawPointY]])
         
-        Text(self.root, es, (self.app.width // 2), (self.app.height // 3), self.app.rfid.presentedCard()[1], 48, (0, 0, 0), 'Arial', Anchor.LEFT, True)
+        Text(self.root, es, (self.app.width // 2), (self.app.height // 3), str(self.app.rfid.presentedCard()[1]), 48, (0, 0, 0), 'Arial', Anchor.LEFT, True)
 
 class App:
     def __init__(self):
         self.logger = Logger()
-        self.config = json.load(open("Client/pfand_configs.json"))
+        self.config = json.load(open("pfand_configs.json"))
         self.logger(f"config loaded, uid: {self.config['machine_id']}")
         self.root = pg.display.set_mode((0, 0), pg.FULLSCREEN)
         self.width = self.root.get_width()
