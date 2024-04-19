@@ -27,7 +27,11 @@ for i in range(32):
 tokens.insert_one({
     "machine_id": str(uid),
     "service_token": service_token,
-    "access_token": access_token_unencrypted
+    "access_token": access_token_unencrypted,
+    "data": {
+        "frame": "",
+        "lastFrame": ""
+    }
 })
 
 print(f"""

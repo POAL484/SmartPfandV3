@@ -7,6 +7,4 @@ cryptography
 RPi.GPIO
 flask
 opencv-python
-keras
-tensorflow
 pi-rc522

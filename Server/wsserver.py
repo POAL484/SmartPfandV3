@@ -9,7 +9,8 @@ from bson.objectid import ObjectId
 import asyncio
 
 from security import *
-from ops import *
+import ops
+from neural import *
 
 class Server:
     def __init__(self, port: int = 9090):
@@ -21,6 +22,8 @@ class Server:
         self.machines = self.db.tokens.machines
         self.users = self.db.users
         self.db_info = self.db.info.find_one({"info": "info"})
+
+        self.neural = Neural()
 
         self.ws_machines = set()
         self.ws_machines_id = []
@@ -86,14 +89,27 @@ class Server:
             data = await self.check_and_return_json(ws_machine, msg)
             if not data: continue
             if not await self.need_fields(ws_machine, data, "op", "data"): continue
-            if not data['op'] in OPS:
+            if not data['op'] in ops.OPS:
                 await self.makeCodeResponse(ws_machine, 904, "err")
                 continue
-            if not await self.need_fields(ws_machine, data['data'], list=OPS[data['op']]['fields']): continue
-            status, resp_data = await OPS[data['op']]['func'](machine_id, data['data'], self.users, self.machines, self.db_info)
+            if not await self.need_fields(ws_machine, data['data'], list=ops.OPS[data['op']]['fields']): continue
+            status, resp_data = await ops.OPS[data['op']]['func'](machine_id, data['data'], self.users, self.machines, self.db_info, self)
+            print("op:", data['op'], "status:", status)
             await ws_machine.send(json.dumps({
+                "op": "ping",
+                "status": "ok",
+                "data": "ok"
+            }))
+            await ws_machine.send(json.dumps({
+                "op": data['op'],
                 "status": status,
                 "data": resp_data
+            }))
+            await asyncio.sleep(.05)
+            await ws_machine.send(json.dumps({
+                "op": "ping",
+                "status": "ok",
+                "data": "ok"
             }))
 
 

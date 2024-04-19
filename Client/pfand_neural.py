@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np 
-from keras.models import load_model
+#from keras.models import load_model
 from enum import Enum
 from pfand_types import BankWorkState
 import threading as thrd
@@ -19,6 +19,8 @@ class Neural:
         self.logger = app.logger
         self.state = NeuralState.NOT_INITED
         self._fails = 0
+        self.ws_send_send = None
+        self.ws_send_recv = None
 
     def init(self):
         try:
@@ -28,7 +30,7 @@ class Neural:
             self.cvCam.read()
             self.logger("camera inited")
             self.logger("loading model")
-            self.model = load_model("model.h5", compile=False)
+            #self.model = load_model("model.h5", compile=False)
             self.logger("model loaded")
             self.logger("neural inited")
             self.state = NeuralState.INITED
@@ -48,23 +50,31 @@ class Neural:
         isSuccess, frame = self.cvCam.read()
         if isSuccess:   
             self.logger("cam read success")
-            cv.imwrite("lastNeuralFrame.png", frame)
             frame = cv.resize(frame, (224, 224))
+            cv.imwrite("lastNeuralFrame.png", frame)
             frame = (frame.astype('float32')/127.5)-1
             frameArray = np.asarray([frame.tolist()])
             if self.app.bankWorkState == BankWorkState.NEURAL_CHECK:
                 self.logger("predicts started")
-                preds = self.model.predict(frameArray)
+                print(frameArray)
+                print(frameArray.shape)
+                #preds = self.model.predict(frameArray)
+                self.ws_send_send = frameArray
+                while not self.ws_send_recv: pass
+                print(f"get result {self.ws_send_recv}")
+                preds = self.ws_send_recv
+                self.ws_send_recv = None
             else:
                 self.logger("iterupted")
                 return
-            predIndex = np.argmax(preds)
+            #predIndex = np.argmax(preds)
+            predIndex = preds
             if self.app.bankWorkState == BankWorkState.NEURAL_CHECK:
                 match predIndex:
-                    case 1:
+                    case 0:
                         self.app.bankWorkState = BankWorkState.CARD
                         self.logger("neural success with result: CARD")
-                    case 2:
+                    case 1:
                         self.app.bankWorkState = BankWorkState.NEURAL_FAIL
                         self.logger("neural success with result: NEURAL_FAIL")
         else:

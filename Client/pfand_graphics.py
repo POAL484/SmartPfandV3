@@ -9,7 +9,7 @@ from pfand_ws import WsClient, WsState
 from pfand_neural import *
 
 import pfand_devices as dvs
-dvs.import_as(emulator=False)
+dvs.import_as(emulator=True)
 
 pg.init()
 
@@ -22,19 +22,32 @@ class Screen:
         self.app.screen = screenClass(self.app)
         self.app.logger(f"App changed screen to {str(screenClass.__name__)}")
 
-class InitScreen(Screen):
+    def call(self):
+        #print(self.app.wsclient.msg)
+        if not self.app.neural.ws_send_send is None:
+            self.app.wsclient.neural_call(self.app.neural.ws_send_send)
+            self.app.neural.ws_send_send = None
+        pred = self.app.wsclient.find("neural.prediction.finish")
+        self.app.wsclient.find("neural.prediction.pcg") 
+        self.app.wsclient.find("neural.prediction.start")
+        self.app.wsclient.find("ping")
+        if not pred is None:
+            self.app.neural.ws_send_recv = pred['data']
+
+class InitScreen(Screen):   
     def __call__(self):
         self.root.fill((0, 0, 0))
         es = EventState()
+        #self.call()
         Text(self.root, es, 100, 100, "Welcome to pfand graphics v3", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
         Text(self.root, es, 100, 150, f"Version: first build", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
         Text(self.root, es, 100, 200, f"Machine id: {self.app.config['machine_id']}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
         Text(self.root, es, 100, 250, f"Continue in {round(15-(time.time()-app.delta_time))}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
-        Text(self.root, es, 700, 100, f"Ws State: {self.app.wsclient.state.name}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
-        Text(self.root, es, 700, 150, f"Storage mode: {self.app.storageMode.name}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
-        Text(self.root, es, 700, 200, f"HX711 value: {self.app.hx711.getWeight()}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
-        Text(self.root, es, 700, 250, f"RFID value: {self.app.rfid.presentedCard()}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
-        Text(self.root, es, 700, 300, f"Neural state: {self.app.neural.state.name}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
+        Text(self.root, es, 750, 100, f"Ws State: {self.app.wsclient.state.name}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
+        Text(self.root, es, 750, 150, f"Storage mode: {self.app.storageMode.name}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
+        Text(self.root, es, 750, 200, f"HX711 value: {self.app.hx711.getWeight()}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
+        Text(self.root, es, 750, 250, f"RFID value: {self.app.rfid.presentedCard()}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
+        Text(self.root, es, 750, 300, f"Neural state: {self.app.neural.state.name}", 25, (255, 255, 255), 'Arial', Anchor.LEFT)
         lastlogs = self.app.logger.logs[::-1]
         for i in range(15):
             if i > len(lastlogs)-1: break
@@ -58,6 +71,7 @@ class IdleScreen(Screen):
     def __call__(self):
         self.root.fill((255, 255, 255))
         es = EventState() # чем гуще лес шкибиди доп ес ес
+        self.call()
 
         SinGraf(self.root, es, 20, 350, colors.WATER_100, 0.022, 15)
         SinGraf(self.root, es, 20, 275, colors.WATER_200, 0.0175, 30)
@@ -106,11 +120,12 @@ class IdleScreen(Screen):
         weight = self.app.hx711.getWeight()
         self.app.bankAnimation(weight, self.root, es)
         if weight > self.app.config['min_bank_weight'] and weight < self.app.config['max_bank_weight']:
-            Text(self.root, es, self.app.width//2, self.app.height//2-100, "Банка ура оооооо да банка ахереть это че банка", 44, (0, 0, 0), 'Arial', Anchor.CENTER)
+            Text(self.root, es, self.app.width//2, self.app.height//2-100, "Сейчас ИИ определит твою банку...", 44, (0, 0, 0), 'Arial', Anchor.CENTER)
             if self.app.bankWorkState == BankWorkState.NOTHING: self.app.bankWorkState = BankWorkState.NEED_START_NEURAL
-        if self.app.bankWorkState == BankWorkState.CARD: self.toScreen(CloseIdleAnimationScreen)
+        if self.app.bankWorkState == BankWorkState.CARD: self.toScreen(CardScreen)
         if self.app.bankWorkState == BankWorkState.NEURAL_FAIL:
-            Text(self.root, es, self.app.width//2, self.app.height//2-100, "ИИ не определил банку", 44, (0, 0, 0), 'Arial', Anchor.CENTER)
+            Text(self.root, es, self.app.width//2, self.app.height//2+100, "ИИ не определил банку", 44, (0, 0, 0), 'Arial', Anchor.CENTER)
+        if weight < self.app.config['min_bank_weight'] or weight > self.app.config['max_bank_weight']: self.app.bankWorkState = BankWorkState.NOTHING
 
 class CloseIdleAnimationScreen(Screen):
     def __init__(self, app):
@@ -121,6 +136,7 @@ class CloseIdleAnimationScreen(Screen):
     def __call__(self):
         self.root.fill((255, 255, 255))
         es = EventState() # чем гуще лес шкибиди доп ес ес
+        self.call()
 
         SinGraf(self.root, es, 20, 350 - (((time.time() - self.animDelt)/self.animDuration))*450, colors.WATER_100, 0.022, 15)
         SinGraf(self.root, es, 20, 275 - (((time.time() - self.animDelt)/self.animDuration))*375, colors.WATER_200, 0.0175, 30)
@@ -146,6 +162,7 @@ class OpenCardAnimationScreen(Screen):
     def __call__(self):
         self.root.fill((255, 255, 255))
         es = EventState() # чем гуще лес шкибиди доп ес ес
+        self.call()
 
         #SinGraf(self.root, es, 20, 350 - (((time.time() - self.animDelt)/self.animDuration))*450, colors.WATER_100, 0.022, 15)
         #SinGraf(self.root, es, 20, 275 - (((time.time() - self.animDelt)/self.animDuration))*375, colors.WATER_200, 0.0175, 30)
@@ -170,6 +187,7 @@ class CardScreen(Screen):
     def __call__(self):
         self.root.fill((255, 255, 255))
         es = EventState()
+        self.call()
 
         stDrawPointX = (self.app.width // 6)
         stDrawPointY = (self.app.height // 3) * 2
@@ -191,6 +209,7 @@ class CardedScreen(Screen):
     def __call__(self):
         self.root.fill((255, 255, 255))
         es = EventState()
+        self.call()
 
         stDrawPointX = (self.app.width // 6)
         stDrawPointY = (self.app.height // 3) * 2
